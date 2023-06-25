@@ -10,6 +10,10 @@
 #include <Library/kAFLAgentLib.h>
 #include <Library/kAFLDxeTargetLib.h>
 
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/RngLib.h>
+#include <Protocol/Rng.h>
+
 VOID
 EFIAPI
 InitkAFLTarget (VOID)
@@ -41,13 +45,27 @@ RunkAFLTarget (
   EFI_STATUS Status = EFI_SUCCESS;
   DEBUG ((DEBUG_INFO, "Not dead !\n"));
   char *p = input;
+  
+  uint32_t rand=0;
+  GetRandomNumber32(&rand);
+  
+  if(rand%2==0 && rand%3==0){
+    p[0] = 'd';
+    p[1] = 'e';
+    p[2] = 'a';
+    p[3] = 'd';
+  }
+
   if (inputSize < 4) {
     return Status;
   } else {
     if (p[0] == 'd' && p[1] == 'e' && p[2] == 'a' && p[3] == 'd') {
+      hprintf("HYPERCALL_KAFL_PANIC");
+      //*((unsigned int*)0) = 0xDEAD;
       kAFL_hypercall(HYPERCALL_KAFL_PANIC, 0);
       // kAFL_hypercall(HYPERCALL_KAFL_KASAN, 0);
     }
   }
   return Status;
 }
+
