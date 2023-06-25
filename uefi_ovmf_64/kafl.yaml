@@ -9,3 +9,4 @@ qemu_base: -enable-kvm -machine kAFL64-v1 -cpu kAFL64-Hypervisor-v1,+vmx -no-reb
 qemu_serial: -device isa-serial,chardev=kafl_serial
 qemu_memory: 256
 qemu_extra:
+qemu_append:
